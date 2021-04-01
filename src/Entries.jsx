@@ -2,13 +2,15 @@ import React, {useState, useEffect} from "react"
 import {
     Paper,
     Grid,
-    List, ListItem, ListItemText,
+    List,
     Typography,
 } from "@material-ui/core"
 import {makeStyles} from "@material-ui/core/styles"
 import NewEntry from "./NewEntry"
 import firebase from "firebase"
 import 'firebase/database'
+import EntryItem from "./EntryItem"
+import EntryBar from "./EntryBar"
 
 export default function Entries(props) {
     const db = firebase.database();
@@ -20,13 +22,13 @@ export default function Entries(props) {
             marginTop: theme.spacing(2),
         },
         paper: {
-            marginTop: theme.spacing(2),
             padding: theme.spacing(2),
         },
     }));
     const classes = useStyles();
 
     const [entries, setEntries] = useState([]);
+    const [toDelete, setToDelete] = useState(false);
 
     useEffect(() => {
         if (props.userId !== "") {
@@ -36,7 +38,10 @@ export default function Entries(props) {
                 dbEntries.child(snapshot.key).once('value')
                     .then(s => {
                         setEntries(old => ([
-                            s.val(),
+                            {
+                                ...s.val(),
+                                id: s.key,
+                            },
                             ...old,
                         ]));
                     });
@@ -44,6 +49,21 @@ export default function Entries(props) {
             );
         }
     }, [props.userId]);
+
+    const onDelete = (entryId) => {
+        if (entryId === undefined) return;
+
+        if (props.userId !== "") {
+            dbUsers.child(props.userId).update({
+                [entryId]: null,
+            });
+            dbEntries.child(entryId).remove();
+            setEntries(old => {
+                const filter = old.filter(e => e.id !== entryId);
+                return filter;
+            });
+        }
+    };
 
     return (
         <div className={classes.root}>
@@ -62,6 +82,12 @@ export default function Entries(props) {
                     />
                 </Grid>
 
+                <EntryBar
+                    onClick={() => {
+                        setToDelete(old => (!old));
+                    }}
+                />
+
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
                         <Typography variant="h4" component="h2">
@@ -70,14 +96,15 @@ export default function Entries(props) {
 
                         <List>
                             {entries.map((e, idx) => (
-                                <ListItem
-                                    key={idx}
-                                >
-                                    <ListItemText
-                                        primary={(e.distance/e.gas).toFixed(2) + " km/L"}
-                                        secondary={new Date(e.timestamp).toDateString() + ": " + parseFloat(e.gas).toFixed(2) + " L  " + parseFloat(e.distance).toFixed(1) + " km"}
-                                    />
-                                </ListItem>
+                                <EntryItem
+                                    key={e.id}
+                                    entryId={e.id}
+                                    distance={e.distance}
+                                    gas={e.gas}
+                                    timestamp={e.timestamp}
+                                    toDelete={toDelete}
+                                    onDelete={onDelete}
+                                />
                             ))}
                         </List>
 
