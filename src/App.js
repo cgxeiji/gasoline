@@ -22,6 +22,7 @@ const firebaseConfig = {
 };
 !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();
 
+
 function App() {
     const darkMode = true;
     const theme = React.useMemo(() =>
@@ -37,6 +38,7 @@ function App() {
     const [userId, setUserId] = useState("");
 
     firebase.auth().onAuthStateChanged( user => {
+        console.log(user)
         if (user) {
             setIsLogged(true);
             setUserId(user.uid);
@@ -56,8 +58,7 @@ function App() {
                     <Main
                         userId={userId}
                     />
-                    :
-                    <Login /> }
+                    : <Login /> }
             </Container>
         </ThemeProvider>
     );

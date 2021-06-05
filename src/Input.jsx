@@ -23,6 +23,7 @@ export default function Input(props) {
 
     const [gas, setGas] = useState("")
     const [distance, setDistance] = useState("")
+    const [price, setPrice] = useState("")
 
     return (
         <Container className={classes.root} >
@@ -45,6 +46,27 @@ export default function Input(props) {
                 autoComplete="off"
                 onChange={event => {
                     setGas(event.target.value);
+                }}
+            />
+
+            <TextField
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                id="gas"
+                label="Price"
+                placeholder="0.0"
+                InputProps={{
+                    endAdornment: <InputAdornment position="end">¥</InputAdornment>,
+                }}
+                InputLabelProps={{
+                    shrink: true,
+                }}
+                value={price}
+                type="number"
+                autoComplete="off"
+                onChange={event => {
+                    setPrice(event.target.value);
                 }}
             />
 
@@ -81,12 +103,15 @@ export default function Input(props) {
                 onClick={event => {
                     if (gas === 0 || gas === "") return;
                     if (distance === 0 || distance === "") return;
+                    if (price === 0 || price === "") return;
                     props.newEntry({
                         gas: gas,
                         distance: distance,
+                        price: price,
                     });
                     setGas("");
                     setDistance("");
+                    setPrice("");
                 }}
             >
                 Add!

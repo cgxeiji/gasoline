@@ -101,6 +101,7 @@ export default function Entries(props) {
                                     entryId={e.id}
                                     distance={e.distance}
                                     gas={e.gas}
+                                    price={e.price}
                                     timestamp={e.timestamp}
                                     toDelete={toDelete}
                                     onDelete={onDelete}

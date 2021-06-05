@@ -17,6 +17,12 @@ export default function EntryItem(props) {
     }));
     const classes = userStyles();
 
+    let secondaryText = new Date(props.timestamp).toDateString() + ": " + parseFloat(props.gas).toFixed(2) + " L  " + parseFloat(props.distance).toFixed(1) + " km";
+
+    if (props.price != null) {
+        secondaryText += "  @ " + parseFloat(props.price) + " ¥/L";
+    }
+
     return (
         <ListItem
             key={props.entryId}
@@ -32,7 +38,7 @@ export default function EntryItem(props) {
             }
             <ListItemText
                 primary={(props.distance/props.gas).toFixed(2) + " km/L"}
-                secondary={new Date(props.timestamp).toDateString() + ": " + parseFloat(props.gas).toFixed(2) + " L  " + parseFloat(props.distance).toFixed(1) + " km"}
+                secondary={secondaryText}
             />
         </ListItem>
     );
