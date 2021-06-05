@@ -11,6 +11,7 @@ import firebase from "firebase"
 import 'firebase/database'
 import EntryItem from "./EntryItem"
 import EntryBar from "./EntryBar"
+import Chart from "./Chart"
 
 export default function Entries(props) {
     const db = firebase.database();
@@ -82,11 +83,18 @@ export default function Entries(props) {
                     />
                 </Grid>
 
+                <Grid item xs={12}>
+                    <Chart
+                        entries={entries}
+                    />
+                </Grid>
+
                 <EntryBar
                     onClick={() => {
                         setToDelete(old => (!old));
                     }}
                 />
+
 
                 <Grid item xs={12}>
                     <Paper className={classes.paper}>
